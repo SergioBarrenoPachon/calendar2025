@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Notas - PurpleGrade</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i data-lucide="graduation-cap" class="brand-icon"></i>
+                <h1>PurpleGrade</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <button id="btn-dashboard" class="nav-item active">
+                    <i data-lucide="layout-dashboard"></i> Mis Cursos
+                </button>
+                <button id="btn-settings" class="nav-item">
+                    <i data-lucide="settings"></i> Configuración
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>Gestor de Evaluaciones v1.0</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+
+                <!-- VIEW: Dashboard -->
+                <section id="view-dashboard" class="view active">
+                    <header class="top-bar">
+                        <h2>Mis Cursos</h2>
+                        <button class="btn-primary" id="btn-add-course">
+                            <i data-lucide="plus"></i> Nuevo Curso
+                        </button>
+                    </header>
+
+                    <div id="courses-grid" class="courses-grid">
+                        <!-- Courses will be injected here via JS -->
+                    </div>
+
+                    <div id="empty-state-courses" class="empty-state hidden">
+                        <i data-lucide="folder-open" class="empty-icon"></i>
+                        <h3>No hay cursos creados</h3>
+                        <p>Crea tu primer curso para empezar a gestionar notas.</p>
+                    </div>
+                </section>
+
+                <!-- VIEW: Course Detail -->
+                <section id="view-course-detail" class="view hidden">
+                    <header class="top-bar">
+                        <div class="breadcrumb">
+                            <button class="btn-text" id="btn-back-dashboard">
+                                <i data-lucide="arrow-left"></i> Volver
+                            </button>
+                            <span class="separator">/</span>
+                            <h2 id="current-course-name">Nombre del Curso</h2>
+                        </div>
+                        <div class="course-actions">
+                            <button class="btn-secondary" id="btn-import-csv">
+                                <i data-lucide="upload"></i> Importar Alumnos (CSV)
+                            </button>
+                            <input type="file" id="csv-input" accept=".csv" hidden>
+                        </div>
+                    </header>
+
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="students">
+                            <i data-lucide="users"></i> Alumnos
+                        </button>
+                        <button class="tab-btn" data-tab="rubrics">
+                            <i data-lucide="clipboard-list"></i> Configuración Evaluación
+                        </button>
+                        <button class="tab-btn" data-tab="grades">
+                            <i data-lucide="bar-chart-3"></i> Calificaciones
+                        </button>
+                    </div>
+
+                    <div class="tab-content">
+                        <!-- Tab: Students -->
+                        <div id="tab-students" class="tab-pane active">
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <h3>Listado de Alumnos</h3>
+                                    <span class="badge" id="student-count">0 alumnos</span>
+                                </div>
+                                <div class="table-container">
+                                    <table class="data-table" id="students-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Apellidos</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Students rows injected via JS -->
+                                        </tbody>
+                                    </table>
+                                    <div id="empty-students" class="empty-state-small">
+                                        <p>No hay alumnos inscritos. Importa un CSV.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Rubrics/Config -->
+                        <div id="tab-rubrics" class="tab-pane">
+                            <div class="panel mb-4">
+                                <div class="panel-header">
+                                    <h3>Categorías de Evaluación</h3>
+                                    <button class="btn-secondary" id="btn-manage-categories">
+                                        <i data-lucide="settings-2"></i> Gestionar Categorías
+                                    </button>
+                                </div>
+                                <div class="categories-summary" id="categories-summary">
+                                    <!-- Summary injected via JS -->
+                                </div>
+                            </div>
+
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <h3>Actividades y Exámenes</h3>
+                                    <button class="btn-small" id="btn-add-assignment">
+                                        <i data-lucide="plus"></i> Nueva Actividad
+                                    </button>
+                                </div>
+                                <div id="assignments-list" class="rubrics-list">
+                                    <!-- Assignments injected via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Grades -->
+                        <div id="tab-grades" class="tab-pane">
+                            <div class="panel">
+                                <div class="panel-header">
+                                    <h3>Hoja de Calificaciones</h3>
+                                    <button class="btn-small" id="btn-export-grades">
+                                        <i data-lucide="download"></i> Exportar
+                                    </button>
+                                </div>
+                                <div class="table-container horizontal-scroll">
+                                    <table class="data-table" id="grades-table">
+                                        <thead>
+                                            <!-- Headers injected via JS -->
+                                        </thead>
+                                        <tbody>
+                                            <!-- Rows injected via JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: Settings -->
+                <section id="view-settings" class="view hidden">
+                    <header class="top-bar">
+                        <h2>Configuración</h2>
+                    </header>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Gestión de Datos</h3>
+                        </div>
+                        <div class="settings-content">
+                            <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                                Aquí puedes gestionar los datos almacenados en tu navegador.
+                            </p>
+                            <button class="btn-secondary" id="btn-clear-data"
+                                style="border-color: #ef4444; color: #ef4444;">
+                                <i data-lucide="trash-2"></i> Borrar todos los datos
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Modal: Add Course -->
+    <div id="modal-add-course" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Crear Nuevo Curso</h3>
+                <button class="btn-close modal-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre del Curso</label>
+                    <input type="text" id="input-course-name" placeholder="Ej. Matemáticas 1º ESO">
+                </div>
+                <div class="form-group">
+                    <label>Descripción (Opcional)</label>
+                    <input type="text" id="input-course-desc" placeholder="Curso 2025/2026">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-text modal-close">Cancelar</button>
+                <button class="btn-primary" id="btn-save-course">Crear Curso</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Manage Categories -->
+    <div id="modal-categories" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Categorías de Evaluación</h3>
+                <button class="btn-close modal-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Define los grandes bloques (ej. Exámenes, Tareas) y sus pesos.
+                </p>
+                <div id="categories-list-container" style="margin-bottom: 1rem;">
+                    <!-- Dynamic categories inputs -->
+                </div>
+                <button class="btn-secondary" id="btn-add-category-row" style="width: 100%; justify-content: center;">
+                    <i data-lucide="plus"></i> Añadir Categoría
+                </button>
+                <div id="categories-total-weight" style="margin-top: 1rem; text-align: right; font-weight: bold;">Total:
+                    0%</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="btn-save-categories">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Assignment -->
+    <div id="modal-assignment" class="modal hidden">
+        <div class="modal-content" style="width: 500px;">
+            <div class="modal-header">
+                <h3>Configurar Actividad</h3>
+                <button class="btn-close modal-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre de la Actividad</label>
+                    <input type="text" id="input-ass-name" placeholder="Ej. Examen Tema 1">
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="input-ass-category">
+                        <!-- Filled dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Evaluación</label>
+                    <select id="input-ass-type">
+                        <option value="numeric">Nota Numérica (0-10)</option>
+                        <option value="rubric">Rúbrica Detallada (Items)</option>
+                    </select>
+                </div>
+
+                <!-- Rubric Configuration Section -->
+                <div id="rubric-config-section" class="hidden"
+                    style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem;">
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Items de la Rúbrica</h4>
+                    <div id="rubric-criteria-list">
+                        <!-- Dynamic criteria rows -->
+                    </div>
+                    <button class="btn-small" id="btn-add-criteria" style="margin-top: 0.5rem;">
+                        <i data-lucide="plus"></i> Añadir Item
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-text modal-close">Cancelar</button>
+                <button class="btn-primary" id="btn-save-assignment">Guardar Actividad</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Grade Rubric -->
+    <div id="modal-grade-rubric" class="modal hidden">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <h3 id="grading-modal-title">Evaluar Alumno</h3>
+                <button class="btn-close modal-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="grading-criteria-container">
+                    <!-- Sliders or inputs for each criteria -->
+                </div>
+                <div
+                    style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                    <span>Nota Calculada:</span>
+                    <span id="grading-total-score"
+                        style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">0.00</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-text modal-close">Cancelar</button>
+                <button class="btn-primary" id="btn-save-rubric-grade">Guardar Nota</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Confirmation -->
+    <div id="modal-confirm" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
+                <div
+                    style="background: rgba(239, 68, 68, 0.2); padding: 1rem; border-radius: 50%; color: #ef4444; margin-bottom: 1rem;">
+                    <i data-lucide="alert-triangle" style="width: 32px; height: 32px;"></i>
+                </div>
+            </div>
+            <h3 id="confirm-title" style="margin-bottom: 0.5rem;">¿Estás seguro?</h3>
+            <p id="confirm-message" style="color: var(--text-muted); margin-bottom: 2rem;">Esta acción no se puede
+                deshacer.</p>
+            <div class="modal-footer" style="justify-content: center; border-top: none; padding-top: 0;">
+                <button class="btn-text modal-close">Cancelar</button>
+                <button class="btn-primary" id="btn-confirm-action"
+                    style="background: #ef4444; border: none;">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
