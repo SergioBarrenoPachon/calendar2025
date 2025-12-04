@@ -494,13 +494,18 @@ window.openGradingModal = (studentId, assignmentId) => {
     }
     assignment.criteria.forEach(crit => {
         const currentVal = gradeData.criteriaValues?.[crit.id] || 0;
+        // If currentVal is 0 (meaning not set or actually 0), we might want to default to 4 for new grading
+        // But if it was saved as 0, we should keep it. 
+        // Let's check if criteriaValues exists to distinguish "new" from "saved as 0".
+        const isNew = !gradeData.criteriaValues;
+        const initialVal = isNew ? 4 : currentVal;
         const div = document.createElement('div');
         div.className = 'grading-item';
         div.innerHTML = `
             <div class="grading-item-header"><label>${crit.name}</label><span>Max: ${crit.maxPoints} pts</span></div>
             <div class="grading-slider-container">
-                <input type="range" class="grading-slider" min="0" max="${crit.maxPoints}" step="0.5" value="${currentVal}" oninput="updateRubricPreview(this, '${crit.id}', ${crit.maxPoints})">
-                <input type="number" class="grading-number-input" min="0" max="${crit.maxPoints}" step="0.5" value="${currentVal}" onchange="updateRubricPreview(this, '${crit.id}', ${crit.maxPoints})">
+                <input type="range" class="grading-slider" min="0" max="${crit.maxPoints}" step="1" value="${initialVal}" oninput="updateRubricPreview(this, '${crit.id}', ${crit.maxPoints})">
+                <input type="number" class="grading-number-input" min="0" max="${crit.maxPoints}" step="1" value="${initialVal}" onchange="updateRubricPreview(this, '${crit.id}', ${crit.maxPoints})">
             </div>
         `;
         container.appendChild(div);

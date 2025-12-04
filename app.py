@@ -46,10 +46,10 @@ if __name__ == '__main__':
     html_path = resource_path("index.html")
     
     webview.create_window(
-        'Calendar App', 
+        'Gestor de Notas', 
         url=html_path, 
         js_api=api,
         width=1200, 
         height=800
     )
-    webview.start(debug=True)
+    webview.start(debug=False)

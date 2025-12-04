@@ -869,26 +869,6 @@ body {
     cursor: pointer;
 }
 
-.grading-number-input {
-    width: 70px;
-    padding: 0.4rem;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0.5rem;
-    border-radius: 1rem;
-    padding: 1.25rem;
-    margin-bottom: 0.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.2s;
-}
-
-.assignment-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(157, 78, 221, 0.3);
-}
-
 .assignment-info h4 {
     margin: 0 0 0.4rem 0;
     font-size: 1.05rem;
@@ -1031,4 +1011,15 @@ body {
     padding: 2rem;
     color: var(--text-muted);
     font-style: italic;
+}
+
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
 }
