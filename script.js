@@ -1,6 +1,6 @@
 // State Management
 const state = {
-    courses: JSON.parse(localStorage.getItem('pg_courses')) || [],
+    courses: [],
     currentCourseId: null,
     editingId: null,
     gradingStudentId: null,
@@ -22,7 +22,15 @@ const modals = {
     confirm: document.getElementById('modal-confirm')
 };
 
-const saveState = () => { localStorage.setItem('pg_courses', JSON.stringify(state.courses)); };
+const saveState = () => {
+    if (window.pywebview && window.pywebview.api) {
+        window.pywebview.api.save_data(state.courses);
+    } else if (window.electronAPI) {
+        window.electronAPI.saveData(state.courses);
+    } else {
+        localStorage.setItem('pg_courses', JSON.stringify(state.courses));
+    }
+};
 const generateId = () => Math.random().toString(36).substr(2, 9);
 const getCurrentCourse = () => state.courses.find(c => c.id === state.currentCourseId);
 const refreshIcons = () => {
@@ -671,7 +679,14 @@ window.deleteStudent = (id) => {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    if (window.electronAPI) {
+        const loaded = await window.electronAPI.loadData();
+        if (loaded) state.courses = loaded;
+    } else {
+        const stored = localStorage.getItem('pg_courses');
+        if (stored) state.courses = JSON.parse(stored);
+    }
     renderDashboard();
 
     // Global Modal Close
@@ -844,4 +859,16 @@ document.addEventListener('DOMContentLoaded', () => {
             navigateTo('dashboard');
         });
     };
+});
+
+window.addEventListener('pywebviewready', async () => {
+    try {
+        const loaded = await window.pywebview.api.load_data();
+        if (loaded) {
+            state.courses = loaded;
+            renderDashboard();
+        }
+    } catch (e) {
+        console.error("Error loading data from pywebview:", e);
+    }
 });

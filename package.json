@@ -1,0 +1,14 @@
+{
+  "name": "calendar-app",
+  "version": "1.0.0",
+  "description": "Calendar Application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Sergio",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  }
+}
