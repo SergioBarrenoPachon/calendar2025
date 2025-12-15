@@ -1,0 +1,3 @@
+- Tienes que descargarte el repositorio
+- Descomprimir el ZIP
+- Ejecutar en dist/Gestor de Notas.exe
